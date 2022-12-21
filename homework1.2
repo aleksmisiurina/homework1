@@ -1,0 +1,49 @@
+#Markdown converter
+
+def init(name):
+    doc = open(name, 'r')
+    read_doc = doc.read()
+    return read_doc
+
+
+def MDttl(data):
+    splt = data.split('\n')
+    title, desc = "", ""
+
+    for i in splt:
+        if i.startswith('# title'):
+            title = i.lstrip('# title')
+        elif i.startswith('# desc'):
+            desc = i.lstrip('# desc')
+
+    return title, desc
+
+
+def formatting(title, desc, cd):
+    path = '-'.join(title.lower().split())
+    tmp = '+ [{}](#{})\n\n## {}\n\n{}\n\n```python\n{}\n```'
+
+    return tmp.format(title, path, title, desc, cd)
+
+
+def cd_md(data):
+    data = read_doc.split(cd_del)
+    titles, cd = data[0], data[1]
+    title, desc = MDttl(titles)
+    res = formatting(title, desc, cd.lstrip())
+    return res
+
+
+def Wdata(data):
+    f = open('out.txt', "w+")
+    f.write(data)
+    f.close()
+    return f
+
+
+read_doc = init('solution.txt')
+md_new = cd_md(read_doc)
+print(Wdata(md_new))
+
+
+
