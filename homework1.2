@@ -46,4 +46,63 @@ md_new = cd_md(read_doc)
 print(Wdata(md_new))
 
 
+#конвертор CSV файл в JSON файл
+
+def reading(name):
+    f = open(name)
+    readspl = f.read().splitlines()
+    return readspl
+
+
+def formatting_keyval(key, rec):
+    return 4 * ' ' + '"' + key + '"' + ': ' + rec
+
+
+def changing_val(rec):
+    if rec.isalpha():
+        if rec not in ['True', 'False']:
+            return '"' + rec + '"'
+        return rec.lower()
+    else:
+        return rec
+
+
+def writing(name, readspl):
+    f = open(name, "w")
+    f.write(readspl)
+    f.close()
+
+
+def data_converter(csv_doc):
+    keys = csv_doc[0].split(',')
+    res = '[' + '\n'
+    csv_doc.pop(0)
+    for ind, row in enumerate(csv_doc):
+        res += 2 * ' ' + '{' + '\n'
+        spl = row.split(',')
+        zipped = dict(zip(keys, spl))
+        len_dict = len(zipped)
+
+        for key_index, key in enumerate(zipped):
+            res += formatting_keyval(key, changing_val(zipped[key]))
+            if key_index + 1 != len_dict:
+                res += ','
+            res += '\n'
+
+        res += 2 * ' ' + '}'
+        if ind + 1 != csv_doc:
+            res += ','
+        res += '\n'
+    res += ']'
+    return res
+
+
+def file_converter(input_file, out):
+    csv_doc = reading(input_file)
+    jsondata = data_converter(csv_doc)
+    writing(out, jsondata)
+
+
+file_converter('data.csv', 'data.json')
+
 
